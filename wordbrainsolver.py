@@ -11,13 +11,13 @@ class wordbox():
     def __init__(self,letters_list):
         self.length = len(letters_list[0])+2
         self.letters_array = [[0]*self.length]*self.length
-        print(self.letters_array)
         for i in range(1, self.length-1):
             self.letters_array[i] = [0]+list(letters_list[i-1])+[0]
 
 
     def drop(self):
         """do something that drop the letter if there are 0 in the box"""
+        
         pass
 
     def show(self):
@@ -43,6 +43,7 @@ if __name__== "__main__":
     small_dict = classify_length(read_wordlist(argv[1]))
 
 
+    # Currently this bunch only do one job and quit
     letters_list = []
     while True:
         letter = input()
@@ -53,3 +54,4 @@ if __name__== "__main__":
             letters_list.append(letter)
     a_wordbox = wordbox(letters_list)
     a_wordbox.show()
+    # ---------------------quit---------------------
