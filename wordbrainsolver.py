@@ -13,12 +13,8 @@ class wordbox():
         self.letters_array = [[0]*self.length]*self.length
         print(self.letters_array)
         for i in range(1, self.length-1):
-            for j in range(1, self.length-1):
-                print(i,j)
-                # print(list(letters_list[i-1])[j-1])
-                print(self.letters_array[i][j])
-                self.letters_array[i][j] = list(letters_list[i-1])[j-1]
-                print(self.letters_array[i][j])
+            self.letters_array[i] = [0]+list(letters_list[i-1])+[0]
+
 
     def drop(self):
         """do something that drop the letter if there are 0 in the box"""
