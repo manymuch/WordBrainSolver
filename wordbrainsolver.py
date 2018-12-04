@@ -115,7 +115,6 @@ if __name__== "__main__":
                     break
                 else:
                     letters_list.append(letter)
-<<<<<<< HEAD
         # test for drop
         a_wordbox = wordbox(letters_list)
         a_wordbox.show()
@@ -125,10 +124,6 @@ if __name__== "__main__":
 
 
 
-=======
-        a_wordbox = wordbox(letters_list)
-        a_wordbox.show()
->>>>>>> bbcf905515baf32525c8b1a33606c298598b9ebb
         print(dictionarize(letters_list))
         print(answer_length)
         # Solve for each solution
