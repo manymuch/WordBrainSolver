@@ -115,6 +115,8 @@ if __name__== "__main__":
                     break
                 else:
                     letters_list.append(letter)
+
+                    
         # test for drop
         a_wordbox = wordbox(letters_list)
         a_wordbox.show()
@@ -130,4 +132,3 @@ if __name__== "__main__":
         for WordNumber in answer_length:
             raw_result = W2L(small_dict, letters_list, WordNumber)
             print(raw_result)
-    # ---------------------quit---------------------
