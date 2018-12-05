@@ -40,6 +40,22 @@ class wordbox():
         for letters in self.letters_array:
             print(letters)
 
+    def neighbour(self,x,y):
+        neighbour_dict = {}
+        for i in range(x-1,x+2):
+            for j in range(y-1,y+2):
+                if (x==i and y==j):
+                    continue
+                if self.letters_array[i][j] != '0':
+                    neighbour_dict[self.letters_array[i][j]] = [i,j]
+        return neighbour_dict
+
+    def find_path(self,word):
+        pass
+
+
+
+
 def classify_length(word_list):
     """preprocess the word list to dictionary of list, copy from Asignment8"""
     whole_dict = {}
