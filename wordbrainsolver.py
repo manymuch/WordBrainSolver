@@ -55,6 +55,19 @@ def read_wordlist(filename):
     with open(filename) as file:
         return file.read().split()
 
+def input_puzzle(letters_list):
+    letter = input()
+    if '*' in letter:
+        answer_length = []
+        answer_pattern = letter.split()
+        for pattern in answer_pattern:
+            answer_length.append(pattern.count('*'))
+        letters_list.append(answer_length)
+    else:
+        letters_list.append(letter)
+        input_puzzle(letters_list)
+        return letters_list
+
 def dictionarize(puzzle):
     #join the list member to a string and dictionarize the puzzle letters
     letter = ''.join(puzzle)
@@ -98,25 +111,12 @@ if __name__== "__main__":
 
     # Dead loop, only exit with EOFError
     while True:
-        letters_list = []
-        answer_length = []
-        flag = False
         # Loop for each puzzle
-        while True:
-            letter = input()
-            if '*' in letter:
-                answer_pattern = letter.split()
-                for pattern in answer_pattern:
-                    answer_length.append(pattern.count('*'))
-                flag = True
-                break
-            else:
-                if flag:
-                    break
-                else:
-                    letters_list.append(letter)
+        whole_list = input_puzzle([])
+        letters_list = whole_list[:-1]
+        answer_length = whole_list[-1]
 
-                    
+
         # test for drop
         a_wordbox = wordbox(letters_list)
         a_wordbox.show()
