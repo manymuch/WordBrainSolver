@@ -185,7 +185,7 @@ class solve_all():
         else:
             for letter, coordinate in self.surround(coordinate):
                 route_copy = self.route.copy()
-                if answer_line.has_a_child(letter):# has_a_child() to be implemented
+                if answer_line[:self.index].has_a_child(letter):# has_a_child() to be implemented
                     route_copy.append(coordinate)
                     answer_line[self.index] = letter
                     self.index += 1
