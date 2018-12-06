@@ -40,18 +40,25 @@ class wordbox():
         for letters in self.letters_array:
             print(letters)
 
-    def neighbour(self,x,y):
-        neighbour_dict = {}
-        for i in range(x-1,x+2):
-            for j in range(y-1,y+2):
-                if (x==i and y==j):
-                    continue
-                if self.letters_array[i][j] != '0':
-                    neighbour_dict[self.letters_array[i][j]] = [i,j]
-        return neighbour_dict
+    # def find_letter(self,x,y,letter):
+    #     threebythree = self.letters_array[x-1:x+2,y-1:y+2]
+    #     threebythree[1,1] = '0'
+    #     possible_answer = np.transpose(np.where(threebythree == letter))
+    #     for coordinate in possible_answer:
+    #         yield threebythree[coordinate[0]][coordinate[1]], coordinate
+    #
+    # def find_next(self,x,y):
+    #
+    #
+    #
+    #
+    # def find_path(self,word):
+    #     for letter in list(word):
+    #         next = self.find_letter(x,y,letter)
+    #         if next is not None:
 
-    def find_path(self,word):
-        pass
+
+
 
 
 
@@ -96,6 +103,96 @@ def dictionarize(puzzle):
     return dict
 
 
+
+#------word list tree------------------------
+class Node:
+    # to be complete
+    def __init__(self, data):
+        self.data = data
+        self.children = {}
+
+    def add_child(self, data):
+        self.children[data] = {}
+
+class Trie:
+    # to be complete
+    def __init__(self):
+        self.is_word = False
+        self.child = {}
+
+    def add(self, word):
+        if word[0] in self.head:
+            self.add
+        else:
+            self.head[word[0]] = {}
+            self.add(word[1:])
+
+
+
+
+
+
+# this is for sovle_a_word.surround
+# where negatvie index of a the grid is nothing
+class NoNegativeList(list):
+    def __getitem__(self,n):
+        if n < 0:
+            raise IndexError("...")
+        return list.__getitem__(self, n)
+
+class solve_all():
+    def __init__(self,letters_list):
+        # the grid here and index is like this
+        # if you input:
+        # abc
+        # def
+        # ghi
+        # ***
+        # the grid is
+        # ['g','d','a'],['h','e','b'],['i','f','c']
+        #
+        self.route = []
+        self.index = 0 # answer_line index
+        self.length = len(letters_list)
+        self.grid = NoNegativeList([])
+        for i in range(self.length):
+            column = NoNegativeList([])
+            for j in range(self.length):
+                column.append(letters_list[self.length-1-j][i])
+            self.grid.append(column)
+        print(self.grid)
+
+    # get all surround letter for a specific coordinate
+    def surround(self,coordinate):
+        x = coordinate[0]
+        y = coordinate[1]
+        print(self.grid[x][y])
+        for i in range(x-1,x+2):
+            for j in range(y-1,y+2):
+                if i!=x or j!=y:
+                    try:
+                        yield self.grid[i][j], [i,j]
+                    except:
+                        pass
+
+    # answer_line shoud be a list
+    # for example answer_line = list("a**** *** ***")
+    def solve(self,answer_line,coordinate):
+        if answer_line[self.index] == ' ':
+            drop()
+            # delete (all the letter before index) in self.grid according to route
+            self.index += 1
+        else:
+            for letter, coordinate in self.surround(coordinate):
+                route_copy = self.route.copy()
+                if answer_line.has_a_child(letter):# has_a_child() to be implemented
+                    route_copy.append(coordinate)
+                    answer_line[self.index] = letter
+                    self.index += 1
+                    solve(answer_line, coordinate)
+
+
+
 #finding possible word combnition from wordlist
 def W2L(word_dict,letter,number):
     letter_dict = dictionarize(letter)
@@ -122,8 +219,7 @@ def W2L(word_dict,letter,number):
 
 
 if __name__== "__main__":
-    small_dict = classify_length(read_wordlist(argv[1]))
-
+    small_dict = read_wordlist(argv[1])
 
     # Dead loop, only exit with EOFError
     while True:
@@ -133,12 +229,16 @@ if __name__== "__main__":
         answer_length = whole_list[-1]
 
 
+
+
+
+
         # test for drop
-        a_wordbox = wordbox(letters_list)
-        a_wordbox.show()
-        a_wordbox.drop()
-        print("   ")
-        a_wordbox.show()
+        # a_wordbox = wordbox(letters_list)
+        # a_wordbox.show()
+        # a_wordbox.drop()
+        # print("   ")
+        # a_wordbox.show()
 
 
 
@@ -148,3 +248,4 @@ if __name__== "__main__":
         for WordNumber in answer_length:
             raw_result = W2L(small_dict, letters_list, WordNumber)
             print(raw_result)
+            a_wordbox.find_path(raw_result[0])
