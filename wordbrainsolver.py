@@ -6,15 +6,6 @@ import numpy as np
 from collections import Counter
 from sys import argv
 
-def classify_length(word_list):
-    """preprocess the word list to dictionary of list, copy from Asignment8"""
-    whole_dict = {}
-    for word in word_list:
-        if len(word) in whole_dict:
-            whole_dict[len(word)].append(word)
-        else:
-            whole_dict[len(word)] = [word]
-    return whole_dict
 
 def read_wordlist(filename):
     """read the word list"""
@@ -27,18 +18,6 @@ def input_puzzle(letters_list):
     if '*' not in letter:
         input_puzzle(letters_list)
     return letters_list
-
-def dictionarize(puzzle):
-    #join the list member to a string and dictionarize the puzzle letters
-    letter = ''.join(puzzle)
-    dict = {}
-    for idx, char in enumerate(letter):
-        if char in dict:
-            dict[char] = dict[char]+1
-        else:
-            dict[char] = 1
-    return dict
-
 
 
 #------word list tree------------------------
@@ -114,7 +93,7 @@ class wordbrainsolver():
             for j in range(self.length):
                 column.append(letters_list[self.length-1-j][i])
             self.grid.append(column)
-        print(self.grid)
+        # print(self.grid)
 
     def all_grid(self):
         for x,column in enumerate(self.grid):
@@ -150,7 +129,7 @@ class wordbrainsolver():
                     local_route  = route.copy()
                     local_route.append(coordinate)
                     answer_line[index] = letter
-                    print(answer_line)
+                    print("".join(answer_line))
             #print(' ')
 
         else:
@@ -178,25 +157,5 @@ if __name__== "__main__":
         puzzle = input_puzzle([])
         wordbrain = wordbrainsolver(puzzle[:-1],small_trie)
         wordbrain.solve(list(puzzle[-1]),None,0,[])
+        print('.')
         exit()
-
-
-
-
-
-        # test for drop
-        # a_wordbox = wordbox(letters_list)
-        # a_wordbox.show()
-        # a_wordbox.drop()
-        # print("   ")
-        # a_wordbox.show()
-
-
-
-        print(dictionarize(letters_list))
-        print(answer_length)
-        # Solve for each solution
-        for WordNumber in answer_length:
-            raw_result = W2L(small_dict, letters_list, WordNumber)
-            print(raw_result)
-            a_wordbox.find_path(raw_result[0])
