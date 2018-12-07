@@ -19,7 +19,25 @@ def input_puzzle(letters_list):
         input_puzzle(letters_list)
     return letters_list
 
+def input_puzzle_wrapper():
+    puzzle = input_puzzle([])
+    letters_list = puzzle[:-1]
+    grid = NoNegativeList([])
+    length = len(letters_list)
+    for i in range(length):
+        column = NoNegativeList([])
+        for j in range(length):
+            column.append(letters_list[length-1-j][i])
+        grid.append(column)
+    return grid, puzzle[-1].split(" ")
 
+def drop(grid,route):
+    for a_route in sorted(route,key=lambda l:l[1], reverse=True):
+        del grid[a_route[0]][a_route[1]]
+    for idx, column in enumerate(grid):
+        if column == []:
+            del grid[idx]
+    return grid
 #------word list tree------------------------
 class Trie():
 
@@ -73,13 +91,9 @@ class one_word_solver():
 
     def __init__(self,letters_list,trie):
         self.trie = trie
-        self.grid = NoNegativeList([])
-        self.length = len(letters_list)
-        for i in range(self.length):
-            column = NoNegativeList([])
-            for j in range(self.length):
-                column.append(letters_list[self.length-1-j][i])
-            self.grid.append(column)
+        self.grid = letters_list
+        self.all_route = []
+
         # print(self.grid)
     def all_grid(self):
         for x,column in enumerate(self.grid):
@@ -111,8 +125,7 @@ class one_word_solver():
                     local_route  = route.copy()
                     local_route.append(coordinate)
                     answer_line[index] = letter
-                    #print("".join(answer_line))
-                    return local_route
+                    self.all_route.append(local_route)
         else:
             for letter, coordinate in self.surround_wrapper(coordinate,route):
                 if self.trie.find_next(answer_line[:index],letter):
@@ -125,17 +138,22 @@ class wordbrainsolver():
     def __init__(self,trie):
         self.trie = trie
 
-    def drop(self,grid,route):
-        
-
     def solve(self,answer_list,grid):
         if len(answer_list) == 1:
-            one_wordbrain = one_word_solver(grid,trie)
+            one_wordbrain = one_word_solver(grid,self.trie)
             one_wordbrain.solve(list(answer_list[0]),None,0,[])
+            if one_wordbrain.all_route != []:
+                print(one_wordbrain.all_route)
         else:
-            one_wordbrain = one_word_solver(grid, trie)
-            route = one_wordbrain.solve(list(answer_list[0]),None,0,[])
-
+            one_wordbrain = one_word_solver(grid, self.trie)
+            one_wordbrain.solve(list(answer_list[0]),None,0,[])
+            print("grid", grid)
+            local_grid = grid.copy()
+            for a_route in one_wordbrain.all_route:
+                print("original grid", local_grid)
+                print(a_route)
+                new_grid = drop(local_grid,a_route)
+                #self.solve(answer_list[1:],new_grid)
 
 if __name__== "__main__":
     small_list = read_wordlist(argv[1])
@@ -143,8 +161,14 @@ if __name__== "__main__":
     # Dead loop, only exit with EOFError
     while True:
         # Loop for each puzzle
-        puzzle = input_puzzle([])
-        wordbrain = wordbrainsolver(puzzle[:-1],small_trie)
-        wordbrain.solve(list(puzzle[-1]),None,0,[])
+        grid, answer_list = input_puzzle_wrapper()
+        print(grid,answer_list)
+
+        wordbrain = wordbrainsolver(small_trie)
+        #print(wordbrain.drop(grid,[[0, 2], [0, 1], [1, 2]]))
+
+        wordbrain.solve(answer_list,grid)
+
+
         print('.')
         exit()
