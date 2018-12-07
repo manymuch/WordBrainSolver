@@ -64,7 +64,6 @@ class Trie():
                 return False
 
 
-
 # this is for sovle_a_word.surround
 # where negatvie index of a the grid is nothing
 class NoNegativeList(list):
@@ -122,11 +121,10 @@ class wordbrainsolver():
                     answer_line[index] = letter
                     print(answer_line)
                     for a_route in sorted(local_route,key=lambda l:l[1], reverse=True):
-                        try:
-                            del self.grid[a_route[0]][a_route[1]]
-                        except:
-                            print(a_route)
-                            print(self.grid)
+                        del self.grid[a_route[0]][a_route[1]]
+                    for idx, column in enumerate(self.grid):
+                        if column == []:
+                            del self.grid[idx]
                     self.solve(answer_line, None, index+2,index+2,[])
         elif len(answer_line) == index+1:
             for letter, coordinate in self.surround(coordinate,route):
