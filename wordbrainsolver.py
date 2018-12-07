@@ -29,9 +29,6 @@ class Trie():
         for word in word_list:
             self.add_word(word)
 
-    def __repr__(self):
-        return repr(self.trie)
-
     def add_word(self, word):
 
         temp_trie = self.trie
@@ -51,7 +48,6 @@ class Trie():
 
     def find_word(self, word):
         sub_trie = self.trie
-
         for letter in word:
             if letter in sub_trie:
                 sub_trie = sub_trie[letter]
@@ -70,36 +66,25 @@ class Trie():
 class NoNegativeList(list):
     def __getitem__(self,n):
         if n < 0:
-            raise IndexError("...")
+            raise IndexError("666")
         return list.__getitem__(self, n)
 
-class wordbrainsolver():
+class one_word_solver():
+
     def __init__(self,letters_list,trie):
-        # the grid here and index is like this
-        # if you input:
-        # abc
-        # def
-        # ghi
-        # ***
-        # the grid is
-        # ['g','d','a'],['h','e','b'],['i','f','c']
-        #
         self.trie = trie
-        #self.index = 0 # answer_line index
-        self.length = len(letters_list)
         self.grid = NoNegativeList([])
+        self.length = len(letters_list)
         for i in range(self.length):
             column = NoNegativeList([])
             for j in range(self.length):
                 column.append(letters_list[self.length-1-j][i])
             self.grid.append(column)
         # print(self.grid)
-
     def all_grid(self):
         for x,column in enumerate(self.grid):
             for y,letter in enumerate(column):
                 yield letter, [x,y]
-
     # get all surround letter for a specific coordinate
     def surround(self,coordinate,route):
         x = coordinate[0]
@@ -113,40 +98,44 @@ class wordbrainsolver():
                     except:
                         pass
 
-    # answer_line shoud be a list
-    # for example answer_line = list("a**** *** ***")
+    def surround_wrapper(self,coordinate,route):
+        if coordinate == None:
+            return self.all_grid()
+        else:
+            return self.surround(coordinate,route)
+
     def solve(self, answer_line, coordinate, index,route):
-        # print(answer_line)
-        if answer_line[index] == ' ':# to be implemented
-            print("new word")
-            # delete (all the letter before index) in self.grid according to route
-            self.solve(answer_line, None, index+1)
-        elif len(answer_line) == index+1:
+        if len(answer_line) == index+1:
             for letter, coordinate in self.surround(coordinate,route):
-                #print(str(answer_line[:index])+letter)
                 if self.trie.find_word(''.join(answer_line[:index])+letter):
-                    #print("find a word")
                     local_route  = route.copy()
                     local_route.append(coordinate)
                     answer_line[index] = letter
-                    print("".join(answer_line))
-            #print(' ')
-
+                    #print("".join(answer_line))
+                    return local_route
         else:
-            if coordinate is None:
-                for letter, coordinate in self.all_grid():
-                    if self.trie.find_next(answer_line[:index],letter):
-                        local_route  = route.copy()
-                        local_route.append(coordinate)
-                        answer_line[index] = letter
-                        self.solve(answer_line, coordinate, index+1,local_route)
-            else:
-                for letter, coordinate in self.surround(coordinate,route):
-                    if self.trie.find_next(answer_line[:index],letter):
-                        local_route  = route.copy()
-                        local_route.append(coordinate)
-                        answer_line[index] = letter
-                        self.solve(answer_line, coordinate, index+1,local_route)
+            for letter, coordinate in self.surround_wrapper(coordinate,route):
+                if self.trie.find_next(answer_line[:index],letter):
+                    local_route  = route.copy()
+                    local_route.append(coordinate)
+                    answer_line[index] = letter
+                    self.solve(answer_line, coordinate, index+1,local_route)
+
+class wordbrainsolver():
+    def __init__(self,trie):
+        self.trie = trie
+
+    def drop(self,grid,route):
+        
+
+    def solve(self,answer_list,grid):
+        if len(answer_list) == 1:
+            one_wordbrain = one_word_solver(grid,trie)
+            one_wordbrain.solve(list(answer_list[0]),None,0,[])
+        else:
+            one_wordbrain = one_word_solver(grid, trie)
+            route = one_wordbrain.solve(list(answer_list[0]),None,0,[])
+
 
 if __name__== "__main__":
     small_list = read_wordlist(argv[1])
