@@ -172,6 +172,7 @@ if __name__== "__main__":
     while True:
         # Loop for each puzzle
         grid, answer_list = input_puzzle_wrapper()
+
         wordbrain = wordbrainsolver(small_trie, answer_list)
         wordbrain.solve(0,grid)
 
