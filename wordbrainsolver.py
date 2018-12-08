@@ -137,25 +137,33 @@ class one_word_solver():
                     self.solve(answer_line, coordinate, index+1,local_route)
 
 class wordbrainsolver():
-    def __init__(self,trie):
+    def __init__(self,trie, answer_list):
         self.trie = trie
+        self.answer_list = answer_list
 
-    def solve(self,answer_list,grid):
-        if len(answer_list) == 1:
+    def solve(self,index,grid):
+        if len(self.answer_list) == index+1:
             one_wordbrain = one_word_solver(grid,self.trie)
-            one_wordbrain.solve(list(answer_list[0]),None,0,[])
+            one_wordbrain.solve(list(self.answer_list[-1]),None,0,[])
             if one_wordbrain.all_route != []:
                 word = ""
                 for coordinate in one_wordbrain.all_route[0]:
                     word += grid[coordinate[0]][coordinate[1]]
+                for i in range(len(self.answer_list)-1):
+                    print(self.answer_list[i])
                 print(word)
         else:
             one_wordbrain = one_word_solver(grid, self.trie)
-            one_wordbrain.solve(list(answer_list[0]),None,0,[])
+            one_wordbrain.solve(list(self.answer_list[index]),None,0,[])
             for route in one_wordbrain.all_route:
                 local_grid = copy.deepcopy(grid)
+
+                word = ""
+                for coordinate in route:
+                    word += local_grid[coordinate[0]][coordinate[1]]
+                self.answer_list[index] = word
                 new_grid = drop(local_grid,route)
-                self.solve(answer_list[1:],new_grid)
+                self.solve(index+1,new_grid)
 
 if __name__== "__main__":
     small_list = read_wordlist(argv[1])
@@ -164,10 +172,8 @@ if __name__== "__main__":
     while True:
         # Loop for each puzzle
         grid, answer_list = input_puzzle_wrapper()
-        #print(grid,answer_list)
-        wordbrain = wordbrainsolver(small_trie)
-        wordbrain.solve(answer_list,grid)
+        wordbrain = wordbrainsolver(small_trie, answer_list)
+        wordbrain.solve(0,grid)
 
 
         print('.')
-        exit()
