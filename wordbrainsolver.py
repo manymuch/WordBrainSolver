@@ -5,7 +5,7 @@
 import numpy as np
 from collections import Counter
 from sys import argv
-
+import copy
 
 def read_wordlist(filename):
     """read the word list"""
@@ -86,6 +86,8 @@ class NoNegativeList(list):
         if n < 0:
             raise IndexError("666")
         return list.__getitem__(self, n)
+    def __copy__(self):
+        return NoNegativeList(self)
 
 class one_word_solver():
 
@@ -143,17 +145,17 @@ class wordbrainsolver():
             one_wordbrain = one_word_solver(grid,self.trie)
             one_wordbrain.solve(list(answer_list[0]),None,0,[])
             if one_wordbrain.all_route != []:
-                print(one_wordbrain.all_route)
+                word = ""
+                for coordinate in one_wordbrain.all_route[0]:
+                    word += grid[coordinate[0]][coordinate[1]]
+                print(word)
         else:
             one_wordbrain = one_word_solver(grid, self.trie)
             one_wordbrain.solve(list(answer_list[0]),None,0,[])
-            print("grid", grid)
-            local_grid = grid.copy()
-            for a_route in one_wordbrain.all_route:
-                print("original grid", local_grid)
-                print(a_route)
-                new_grid = drop(local_grid,a_route)
-                #self.solve(answer_list[1:],new_grid)
+            for route in one_wordbrain.all_route:
+                local_grid = copy.deepcopy(grid)
+                new_grid = drop(local_grid,route)
+                self.solve(answer_list[1:],new_grid)
 
 if __name__== "__main__":
     small_list = read_wordlist(argv[1])
@@ -162,11 +164,8 @@ if __name__== "__main__":
     while True:
         # Loop for each puzzle
         grid, answer_list = input_puzzle_wrapper()
-        print(grid,answer_list)
-
+        #print(grid,answer_list)
         wordbrain = wordbrainsolver(small_trie)
-        #print(wordbrain.drop(grid,[[0, 2], [0, 1], [1, 2]]))
-
         wordbrain.solve(answer_list,grid)
 
 
