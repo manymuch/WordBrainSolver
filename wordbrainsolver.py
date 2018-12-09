@@ -120,7 +120,8 @@ class one_word_solver():
         else:
             return self.surround(coordinate,route)
 
-    def solve(self, answer_line, coordinate, index,route):
+    def solve(self, old_answer_line, coordinate, index,route):
+        answer_line = old_answer_line.copy()
         if len(answer_line) == index+1:
             for letter, coordinate in self.surround(coordinate,route):
                 if self.trie.find_word(''.join(answer_line[:index])+letter):
@@ -128,6 +129,16 @@ class one_word_solver():
                     local_route.append(coordinate)
                     answer_line[index] = letter
                     self.all_route.append(local_route)
+        elif answer_line[index] != '*':
+            print(answer_line)
+            print("index = "+str(index))
+            print(answer_line[index])
+            coordinates = np.where(np.asarray(self.grid) == answer_line[index])
+            for coordinate in coordinates:
+                coord = coordinate.tolist()
+                local_route  = route.copy()
+                local_route.append(coord)
+                self.solve(answer_line, coord, index+1,local_route)
         else:
             for letter, coordinate in self.surround_wrapper(coordinate,route):
                 if self.trie.find_next(answer_line[:index],letter):
