@@ -95,7 +95,6 @@ class one_word_solver():
         self.trie = trie
         self.grid = letters_list
         self.all_route = []
-
         # print(self.grid)
     def all_grid(self):
         for x,column in enumerate(self.grid):
@@ -129,7 +128,8 @@ class one_word_solver():
                     local_route.append(coordinate)
                     answer_line[index] = letter
                     self.all_route.append(local_route)
-        elif answer_line[index] != '*':
+
+        elif answer_line[index] != '*' and self.special_case == index:
             print(answer_line)
             print("index = "+str(index))
             print(answer_line[index])
@@ -151,24 +151,26 @@ class wordbrainsolver():
     def __init__(self,trie, answer_list):
         self.trie = trie
         self.answer_list = answer_list
-
+        self.print_history = []
     def solve(self,index,grid):
+        flag = False
         if len(self.answer_list) == index+1:
             one_wordbrain = one_word_solver(grid,self.trie)
             one_wordbrain.solve(list(self.answer_list[-1]),None,0,[])
             if one_wordbrain.all_route != []:
-                word = ""
+                last_word = ""
+                words = ""
                 for coordinate in one_wordbrain.all_route[0]:
-                    word += grid[coordinate[0]][coordinate[1]]
+                    last_word += grid[coordinate[0]][coordinate[1]]
                 for i in range(len(self.answer_list)-1):
-                    print(self.answer_list[i])
-                print(word)
+                    words += (str(self.answer_list[i])+' ')
+                words += last_word
+                self.print_history.append(words)
         else:
             one_wordbrain = one_word_solver(grid, self.trie)
             one_wordbrain.solve(list(self.answer_list[index]),None,0,[])
             for route in one_wordbrain.all_route:
                 local_grid = copy.deepcopy(grid)
-
                 word = ""
                 for coordinate in route:
                     word += local_grid[coordinate[0]][coordinate[1]]
@@ -178,14 +180,22 @@ class wordbrainsolver():
 
 if __name__== "__main__":
     small_list = read_wordlist(argv[1])
+    large_list = read_wordlist(argv[2])
     small_trie = Trie(small_list)
+    large_trie = Trie(large_list)
     # Dead loop, only exit with EOFError
     while True:
         # Loop for each puzzle
-        grid, answer_list = input_puzzle_wrapper()
 
+        grid, answer_list = input_puzzle_wrapper()
         wordbrain = wordbrainsolver(small_trie, answer_list)
         wordbrain.solve(0,grid)
-
-
+        print_history = list(set(wordbrain.print_history))
+        if print_history == []:
+            wordbrain = wordbrainsolver(large_trie, answer_list)
+            wordbrain.solve(0,grid)
+            print_history = list(set(wordbrain.print_history))
+        print_history.sort()
+        for output in print_history:
+            print(output)
         print('.')
