@@ -119,8 +119,9 @@ class one_word_solver():
         else:
             return self.surround(coordinate,route)
 
-    def solve(self, old_answer_line, coordinate, index,route):
+    def solve(self, old_answer_line, coordinate, index,route,global_index):
         answer_line = old_answer_line.copy()
+        global original_hint
         if len(answer_line) == index+1:
             for letter, coordinate in self.surround(coordinate,route):
                 if self.trie.find_word(''.join(answer_line[:index])+letter):
@@ -129,23 +130,24 @@ class one_word_solver():
                     answer_line[index] = letter
                     self.all_route.append(local_route)
 
-        # elif answer_line[index] != '*' and coordinate is None:
-        #     print(answer_line)
-        #     print("index = "+str(index))
-        #     print(answer_line[index])
-        #     coordinates = np.where(np.asarray(self.grid) == answer_line[index])
-        #     for coordinate in coordinates:
-        #         coord = coordinate.tolist()
-        #         local_route  = route.copy()
-        #         local_route.append(coord)
-        #         self.solve(answer_line, coord, index+1,local_route)
+        elif original_hint[global_index][index] != '*':
+            print(original_hint[global_index])
+            print(answer_line)
+            print("global_index = "+str(global_index))
+            print("letter index = "+str(index))
+            coordinates = np.where(np.asarray(self.grid) == answer_line[index])
+            for coordinate in coordinates:
+                coord = coordinate.tolist()
+                local_route  = route.copy()
+                local_route.append(coord)
+                self.solve(answer_line, coord, index+1,local_route,global_index)
         else:
             for letter, coordinate in self.surround_wrapper(coordinate,route):
                 if self.trie.find_next(answer_line[:index],letter):
                     local_route  = route.copy()
                     local_route.append(coordinate)
                     answer_line[index] = letter
-                    self.solve(answer_line, coordinate, index+1,local_route)
+                    self.solve(answer_line, coordinate, index+1,local_route,global_index)
 
 class wordbrainsolver():
     def __init__(self,trie, answer_list):
@@ -153,10 +155,9 @@ class wordbrainsolver():
         self.answer_list = answer_list
         self.print_history = []
     def solve(self,index,grid):
-        flag = False
         if len(self.answer_list) == index+1:
             one_wordbrain = one_word_solver(grid,self.trie)
-            one_wordbrain.solve(list(self.answer_list[-1]),None,0,[])
+            one_wordbrain.solve(list(self.answer_list[-1]),None,0,[],index)
             if one_wordbrain.all_route != []:
                 last_word = ""
                 words = ""
@@ -168,7 +169,7 @@ class wordbrainsolver():
                 self.print_history.append(words)
         else:
             one_wordbrain = one_word_solver(grid, self.trie)
-            one_wordbrain.solve(list(self.answer_list[index]),None,0,[])
+            one_wordbrain.solve(list(self.answer_list[index]),None,0,[],index)
             for route in one_wordbrain.all_route:
                 local_grid = copy.deepcopy(grid)
                 word = ""
@@ -186,10 +187,9 @@ if __name__== "__main__":
     # Dead loop, only exit with EOFError
     while True:
         # Loop for each puzzle
-
         grid, answer_list = input_puzzle_wrapper()
         answer_copy = answer_list.copy()
-
+        original_hint = answer_list.copy()
         wordbrain = wordbrainsolver(small_trie, answer_list)
         wordbrain.solve(0,grid)
         print_history = list(set(wordbrain.print_history))
@@ -198,17 +198,18 @@ if __name__== "__main__":
             wordbrain.solve(0,grid)
             print_history = list(set(wordbrain.print_history))
         print_history.sort()
+        for answer in print_history:
+            print(answer)
 
+        # answer_string = ' '.join(answer_copy)
+        # del_list = []
+        # for idx2,answer in enumerate(print_history):
+        #     for idx, letter in enumerate(answer_string):
+        #         if letter != '*' and letter != answer[idx]:
+        #             del_list.append(idx2)
+        #             break
 
-        answer_string = ' '.join(answer_copy)
-        del_list = []
-        for idx2,answer in enumerate(print_history):
-            for idx, letter in enumerate(answer_string):
-                if letter != '*' and letter != answer[idx]:
-                    del_list.append(idx2)
-                    break
-
-        for idx, answer in enumerate(print_history):
-            if idx not in del_list:
-                print(answer)
+        # for idx, answer in enumerate(print_history):
+        #     if idx not in del_list:
+        #         print(answer)
         print('.')
