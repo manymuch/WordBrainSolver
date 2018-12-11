@@ -13,7 +13,10 @@ def read_wordlist(filename):
         return file.read().split()
 
 def input_puzzle(letters_list):
-    letter = input()
+    try:
+        letter = input()
+    except EOFError:
+        return letters_list
     letters_list.append(letter)
     if '*' not in letter:
         input_puzzle(letters_list)
@@ -122,7 +125,7 @@ class one_word_solver():
     def solve(self, old_answer_line, coordinate, index,route,global_index):
         answer_line = old_answer_line.copy()
         global original_hint
-        if len(answer_line) == index+1:
+        if len(answer_line) == index+1 and original_hint[global_index][index] == '*':
             for letter, coordinate in self.surround(coordinate,route):
                 if self.trie.find_word(''.join(answer_line[:index])+letter):
                     local_route  = route.copy()
@@ -130,14 +133,27 @@ class one_word_solver():
                     answer_line[index] = letter
                     self.all_route.append(local_route)
 
+        elif len(answer_line) == index+1 and original_hint[global_index][index] != '*':
+            for letter, coordinate in self.surround(coordinate,route):
+                if self.trie.find_word(''.join(answer_line[:index])+letter) and letter == original_hint[global_index][index]:
+                    local_route  = route.copy()
+                    local_route.append(coordinate)
+                    answer_line[index] = letter
+                    self.all_route.append(local_route)
+
         elif original_hint[global_index][index] != '*':
-            print(original_hint[global_index])
-            print(answer_line)
-            print("global_index = "+str(global_index))
-            print("letter index = "+str(index))
-            coordinates = np.where(np.asarray(self.grid) == answer_line[index])
-            for coordinate in coordinates:
-                coord = coordinate.tolist()
+            # print(original_hint[global_index])
+            # print(answer_line)
+            # print("global_index = "+str(global_index))
+            # print("letter index = "+str(index))
+            # print("gird = "+str(np.asarray(self.grid)))
+            # print("letter = "+str(original_hint[global_index][index]))
+            coordinates = []
+            for idx1, column in enumerate(self.grid):
+                for idx2, letter in enumerate(column):
+                    if letter == original_hint[global_index][index]:
+                        coordinates.append([idx1,idx2])
+            for coord in coordinates:
                 local_route  = route.copy()
                 local_route.append(coord)
                 self.solve(answer_line, coord, index+1,local_route,global_index)
