@@ -44,7 +44,6 @@ def drop(grids, route):
         del grids[a_route[0]][a_route[1]]
     for idx, column in enumerate(grids):
         if column == []:
-            # del Grid[idx]
             grids[idx] = ['0']
     return grids
 # ------word list tree------------------------
@@ -98,9 +97,6 @@ class NoNegativeList(list):
             raise IndexError("666")
         return list.__getitem__(self, n)
 
-    def __copy__(self):
-        return NoNegativeList(self)
-
 
 class Onewordsolver():
     """solve one word"""
@@ -150,10 +146,12 @@ class Onewordsolver():
                     answer_line[index] = letter
                     self.all_route.append(local_route)
 
-        elif len(answer_line) == index + 1 and ORIGINAL_HINT[global_index][index] != '*':
+        elif len(answer_line) == index + 1 and \
+                ORIGINAL_HINT[global_index][index] != '*':
             for letter, coordinates in self.surround(coordinate, route):
                 if self.trie.find_word(''.join(
-                        answer_line[:index]) + letter) and letter == ORIGINAL_HINT[global_index][index]:
+                        answer_line[:index]) + letter) and \
+                        letter == ORIGINAL_HINT[global_index][index]:
                     local_route = route.copy()
                     local_route.append(coordinates)
                     answer_line[index] = letter
