@@ -218,8 +218,7 @@ class Wordbrainsolver():
         else:
             one_wordbrain = Onewordsolver(grid, self.trie)
             one_wordbrain.solve(
-                list(
-                    self.answer_list[index]),
+                list(self.answer_list[index]),
                 None,
                 0,
                 [],
