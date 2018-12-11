@@ -39,7 +39,8 @@ def drop(grid,route):
         del grid[a_route[0]][a_route[1]]
     for idx, column in enumerate(grid):
         if column == []:
-            del grid[idx]
+            # del grid[idx]
+            grid[idx] = ['0']
     return grid
 #------word list tree------------------------
 class Trie():
@@ -174,15 +175,16 @@ class wordbrainsolver():
         if len(self.answer_list) == index+1:
             one_wordbrain = one_word_solver(grid,self.trie)
             one_wordbrain.solve(list(self.answer_list[-1]),None,0,[],index)
-            if one_wordbrain.all_route != []:
+
+            words = ""
+            for i in range(len(self.answer_list)-1):
+                words += (str(self.answer_list[i])+' ')
+
+            for route in one_wordbrain.all_route:
                 last_word = ""
-                words = ""
-                for coordinate in one_wordbrain.all_route[0]:
+                for coordinate in route:
                     last_word += grid[coordinate[0]][coordinate[1]]
-                for i in range(len(self.answer_list)-1):
-                    words += (str(self.answer_list[i])+' ')
-                words += last_word
-                self.print_history.append(words)
+                self.print_history.append(words+last_word)
         else:
             one_wordbrain = one_word_solver(grid, self.trie)
             one_wordbrain.solve(list(self.answer_list[index]),None,0,[],index)
