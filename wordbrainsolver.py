@@ -133,9 +133,8 @@ class Onewordsolver():
         else:
             return self.surround(coordinate, route)
 
-    def solve(self, old_answer_line, coordinate, index, route, global_index):
+    def solve(self, answer_line, coordinate, index, route, global_index):
         """recursion solver for one word"""
-        answer_line = old_answer_line.copy()
         global ORIGINAL_HINT
         if len(answer_line) == index + \
                 1 and ORIGINAL_HINT[global_index][index] == '*':
@@ -231,21 +230,17 @@ class Wordbrainsolver():
                 for coordinate in route:
                     word += local_grid[coordinate[0]][coordinate[1]]
                 self.answer_list[index] = word
-                new_grid = drop(local_grid, route)
-                self.solve(index + 1, new_grid)
+                self.solve(index + 1, drop(local_grid, route))
 
 
 if __name__ == "__main__":
-    SMALL_LIST = read_wordlist(argv[1])
-    LARGE_LIST = read_wordlist(argv[2])
-    SMALL_TRIE = Trie(SMALL_LIST)
-    LARGE_TRIE = Trie(LARGE_LIST)
+    SMALL_TRIE = Trie(read_wordlist(argv[1]))
+    LARGE_TRIE = Trie(read_wordlist(argv[2]))
     # Dead loop, only exit with EOFError
     while True:
         # Loop for each puzzle
         GRID, ANSWER_LIST = input_puzzle_wrapper()
         ORIGINAL_HINT = ANSWER_LIST.copy()
-        ANSWER_COPY = ANSWER_LIST.copy()
         WORD_BRAIN = Wordbrainsolver(SMALL_TRIE, ANSWER_LIST)
         WORD_BRAIN.solve(0, GRID)
         PRINT_HISTORY = list(set(WORD_BRAIN.print_history))
