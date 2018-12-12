@@ -21,11 +21,10 @@ def input_puzzle_wrapper():
         puzzle.append(input())
     letters_list = puzzle[:-1]
     grids = NoNegativeList([])
-    length = len(letters_list)
-    for i in range(length):
+    for i in range(len(letter)):
         column = NoNegativeList([])
-        for j in range(length):
-            column.append(letters_list[length - 1 - j][i])
+        for j in range(len(letter)):
+            column.append(letters_list[len(letter) - 1 - j][i])
         grids.append(column)
     return grids, puzzle[-1].split(" ")
 
