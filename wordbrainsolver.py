@@ -12,21 +12,13 @@ def read_wordlist(filename):
         return file.read().split()
 
 
-def input_puzzle(letters_list):
-    """input puzzle"""
-    try:
-        letter = input()
-    except EOFError:
-        return letters_list
-    letters_list.append(letter)
-    if '*' not in letter:
-        input_puzzle(letters_list)
-    return letters_list
-
-
 def input_puzzle_wrapper():
     """input puzzle wrapper"""
-    puzzle = input_puzzle([])
+    puzzle = []
+    letter = input()
+    puzzle.append(letter)
+    for i in range(len(letter)):
+        puzzle.append(input())
     letters_list = puzzle[:-1]
     grids = NoNegativeList([])
     length = len(letters_list)
@@ -136,6 +128,8 @@ class Onewordsolver():
     def solve(self, answer_line, coordinate, index, route, global_index):
         """recursion solver for one word"""
         global ORIGINAL_HINT
+        if ORIGINAL_HINT == ['']:
+            exit()
         if len(answer_line) == index + \
                 1 and ORIGINAL_HINT[global_index][index] == '*':
             for letter, coordinates in self.surround(coordinate, route):
@@ -238,7 +232,10 @@ if __name__ == "__main__":
     # Dead loop, only exit with EOFError
     while True:
         # Loop for each puzzle
-        GRID, ANSWER_LIST = input_puzzle_wrapper()
+        try:
+            GRID, ANSWER_LIST = input_puzzle_wrapper()
+        except EOFError:
+            exit()
         ORIGINAL_HINT = ANSWER_LIST.copy()
         WORD_BRAIN = Wordbrainsolver(SMALL_TRIE, ANSWER_LIST)
         WORD_BRAIN.solve(0, GRID)
